@@ -1,0 +1,36 @@
+{
+  "name": "gologin-webunlocker-sdk",
+  "version": "0.1.0",
+  "description": "Minimal TypeScript SDK for GoLogin Web Unlocker scraping API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "gologin-webunlocker": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "example": "tsx examples/basic.ts",
+    "cli": "node dist/cli.js"
+  },
+  "keywords": [
+    "gologin",
+    "webunlocker",
+    "sdk",
+    "scraping"
+  ],
+  "author": "GoLogin",
+  "homepage": "https://gologin.com/web-unlocker",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

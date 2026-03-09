@@ -1,93 +1,211 @@
-# Gologin Webunlocker
+# GoLogin Web Unlocker SDK (TypeScript)
 
+Minimal Node.js SDK for GoLogin Web Unlocker scraping API.
 
+The backend endpoint is:
 
-## Getting started
+`GET https://parsing.webunlocker.gologin.com/v1/scrape?url={encoded_url}`
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Authentication is sent via header: `apikey: <API_KEY>`.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+The backend response is raw HTML/text.
 
-## Add your files
+## Install
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/easync/gologin-webunlocker.git
-git branch -M main
-git push -uf origin main
+```bash
+npm install gologin-webunlocker-sdk
 ```
 
-## Integrate with your tools
+## CLI
 
-* [Set up project integrations](https://gitlab.com/easync/gologin-webunlocker/-/settings/integrations)
+After build/install, CLI command:
 
-## Collaborate with your team
+```bash
+gologin-webunlocker <command> <url> [options]
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Commands:
 
-## Test and Deploy
+- `scrape` (raw HTML/text from API)
+- `text` (derived from HTML in SDK)
+- `markdown` (derived from HTML in SDK)
+- `json` (derived metadata from HTML in SDK)
 
-Use the built-in continuous integration in GitLab.
+Options:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+- `--api-key <key>` or `GOLOGIN_WEBUNLOCKER_API_KEY`
+- `--base-url <url>`
+- `--timeout-ms <number>`
+- `--max-retries <number>`
 
-***
+Examples:
 
-# Editing this README
+```bash
+gologin-webunlocker scrape https://example.com --api-key wu_live_xxx
+GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker text https://example.com
+GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Quick Start
 
-## Suggestions for a good README
+```ts
+import { WebUnlocker } from "gologin-webunlocker-sdk";
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+const client = new WebUnlocker({
+  apiKey: process.env.GOLOGIN_WEBUNLOCKER_API_KEY!
+});
 
-## Name
-Choose a self-explaining name for your project.
+const result = await client.scrape("https://example.com");
+console.log(result.status);
+console.log(result.content.slice(0, 500));
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Constructor Options
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```ts
+new WebUnlocker({
+  apiKey: "wu_live_xxx",
+  baseUrl: "https://parsing.webunlocker.gologin.com",
+  timeoutMs: 15000,
+  maxRetries: 2
+});
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- `apiKey: string` required, sent as `apikey` header
+- `baseUrl?: string` defaults to `https://parsing.webunlocker.gologin.com`
+- `timeoutMs?: number` defaults to `15000`
+- `maxRetries?: number` defaults to `2`
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Normalized `scrape()` Response
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+`/v1/scrape` returns raw HTML/text from the upstream page.  
+The SDK wraps it into a normalized object:
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```ts
+type ScrapeResult = {
+  success: true;
+  url: string;
+  content: string;
+  status?: number | null;
+  contentType?: string | null;
+  headers?: Record<string, string>;
+};
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+`scrape()` throws typed errors for non-2xx responses.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+Example:
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```ts
+const result = await client.scrape("https://example.com");
+console.log(result.status);
+console.log(result.contentType);
+console.log(result.content.slice(0, 500));
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## `scrapeRaw()` Example
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+Use `scrapeRaw()` when you need direct access to native `fetch` `Response`:
 
-## License
-For open source projects, say how it is licensed.
+```ts
+const response = await client.scrapeRaw("https://example.com");
+console.log(response.status);
+const html = await response.text();
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+`scrapeRaw()` returns the raw `Response` object as-is (including non-2xx statuses).
+
+## `buildScrapeUrl()` Example
+
+```ts
+const requestUrl = client.buildScrapeUrl("https://example.com");
+console.log(requestUrl);
+// https://parsing.webunlocker.gologin.com/v1/scrape?url=https%3A%2F%2Fexample.com
+```
+
+## SDK-Side Derived Methods
+
+These methods are derived from the HTML returned by the API.  
+They do not require additional backend features.
+
+### `scrapeText()` (derived from HTML)
+
+```ts
+const result = await client.scrapeText("https://example.com");
+console.log(result.text.slice(0, 500));
+```
+
+### `scrapeMarkdown()` (derived from HTML)
+
+```ts
+const result = await client.scrapeMarkdown("https://example.com");
+console.log(result.markdown.slice(0, 500));
+```
+
+### `scrapeJSON()` (derived from HTML)
+
+```ts
+const result = await client.scrapeJSON("https://example.com");
+console.log(result.data.title);
+console.log(result.data.description);
+console.log(result.data.links.slice(0, 5));
+```
+
+### `batchScrape()` (client-side helper)
+
+```ts
+const results = await client.batchScrape(
+  ["https://example.com", "https://gologin.com"],
+  { concurrency: 2 }
+);
+console.log(results.map((r) => ({ url: r.url, status: r.status })));
+```
+
+## Typed Errors
+
+```ts
+import {
+  WebUnlocker,
+  WebUnlockerError,
+  AuthenticationError,
+  RateLimitError,
+  APIError,
+  TimeoutError,
+  NetworkError
+} from "gologin-webunlocker-sdk";
+
+try {
+  const client = new WebUnlocker({ apiKey: "wu_live_xxx" });
+  await client.scrape("https://example.com");
+} catch (error) {
+  if (error instanceof AuthenticationError) {
+    console.error("Invalid API key");
+  } else if (error instanceof RateLimitError) {
+    console.error("Rate limited");
+  } else if (error instanceof TimeoutError) {
+    console.error("Request timed out");
+  } else if (error instanceof NetworkError) {
+    console.error("Network failure");
+  } else if (error instanceof APIError) {
+    console.error("Server/API error");
+  } else if (error instanceof WebUnlockerError) {
+    console.error("SDK error");
+  } else {
+    console.error("Unknown error", error);
+  }
+}
+```
+
+Error mapping:
+
+- `401`/`403` -> `AuthenticationError`
+- `429` -> `RateLimitError`
+- `500+` -> `APIError`
+- abort/timeout -> `TimeoutError`
+- fetch/network issues -> `NetworkError`
+
+## Local Example
+
+```bash
+GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx npm run example
+```
