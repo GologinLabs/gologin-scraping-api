@@ -204,4 +204,4 @@ export class WebUnlocker {
 }
 
 // Backward-compatible alias.
-export class GoLoginWebUnlockerClient extends WebUnlocker {}
+export class GologinWebUnlockerClient extends WebUnlocker {}

@@ -1,6 +1,6 @@
-# GoLogin Web Unlocker SDK (TypeScript)
+# Gologin Web Unlocker SDK (TypeScript)
 
-Minimal Node.js SDK for GoLogin Web Unlocker scraping API.
+Minimal Node.js SDK for Gologin Web Unlocker scraping API.
 
 The backend endpoint is:
 

@@ -58,4 +58,4 @@ export class NetworkError extends WebUnlockerError {
 }
 
 // Backward-compatible alias.
-export class GoLoginSDKError extends WebUnlockerError {}
+export class GologinSDKError extends WebUnlockerError {}

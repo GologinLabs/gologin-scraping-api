@@ -26,5 +26,5 @@ export declare class TimeoutError extends WebUnlockerError {
 export declare class NetworkError extends WebUnlockerError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class GoLoginSDKError extends WebUnlockerError {
+export declare class GologinSDKError extends WebUnlockerError {
 }

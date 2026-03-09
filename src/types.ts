@@ -5,7 +5,7 @@ export type WebUnlockerOptions = {
   maxRetries?: number;
 };
 
-export type GoLoginWebUnlockerClientOptions = WebUnlockerOptions;
+export type GologinWebUnlockerClientOptions = WebUnlockerOptions;
 
 export type ScrapeOptions = {
   timeoutMs?: number;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoLoginSDKError = exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.WebUnlockerError = void 0;
+exports.GologinSDKError = exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.WebUnlockerError = void 0;
 class WebUnlockerError extends Error {
     status;
     url;
@@ -53,6 +53,6 @@ class NetworkError extends WebUnlockerError {
 }
 exports.NetworkError = NetworkError;
 // Backward-compatible alias.
-class GoLoginSDKError extends WebUnlockerError {
+class GologinSDKError extends WebUnlockerError {
 }
-exports.GoLoginSDKError = GoLoginSDKError;
+exports.GologinSDKError = GologinSDKError;

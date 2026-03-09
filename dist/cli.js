@@ -5,7 +5,7 @@ const client_1 = require("./client");
 const errors_1 = require("./errors");
 function printUsage() {
     process.stderr.write([
-        "GoLogin Web Unlocker CLI",
+        "Gologin Web Unlocker CLI",
         "",
         "Usage:",
         "  gologin-webunlocker <command> <url> [options]",

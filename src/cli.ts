@@ -20,7 +20,7 @@ type ParsedArgs = {
 function printUsage(): void {
   process.stderr.write(
     [
-      "GoLogin Web Unlocker CLI",
+      "Gologin Web Unlocker CLI",
       "",
       "Usage:",
       "  gologin-webunlocker <command> <url> [options]",

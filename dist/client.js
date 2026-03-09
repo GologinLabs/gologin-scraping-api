@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoLoginWebUnlockerClient = exports.WebUnlocker = void 0;
+exports.GologinWebUnlockerClient = exports.WebUnlocker = void 0;
 const errors_1 = require("./errors");
 const http_1 = require("./http");
 const utils_1 = require("./utils");
@@ -143,6 +143,6 @@ class WebUnlocker {
 }
 exports.WebUnlocker = WebUnlocker;
 // Backward-compatible alias.
-class GoLoginWebUnlockerClient extends WebUnlocker {
+class GologinWebUnlockerClient extends WebUnlocker {
 }
-exports.GoLoginWebUnlockerClient = GoLoginWebUnlockerClient;
+exports.GologinWebUnlockerClient = GologinWebUnlockerClient;

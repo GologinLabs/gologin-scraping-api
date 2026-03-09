@@ -1,8 +1,8 @@
-export { WebUnlocker, GoLoginWebUnlockerClient } from "./client";
+export { WebUnlocker, GologinWebUnlockerClient } from "./client";
 export type {
   BatchScrapeOptions,
   WebUnlockerOptions,
-  GoLoginWebUnlockerClientOptions,
+  GologinWebUnlockerClientOptions,
   ScrapeJSONData,
   ScrapeJSONResult,
   ScrapeMarkdownResult,
@@ -12,7 +12,7 @@ export type {
 } from "./types";
 export {
   WebUnlockerError,
-  GoLoginSDKError,
+  GologinSDKError,
   AuthenticationError,
   RateLimitError,
   APIError,

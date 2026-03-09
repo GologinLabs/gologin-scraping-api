@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.GoLoginSDKError = exports.WebUnlockerError = exports.GoLoginWebUnlockerClient = exports.WebUnlocker = void 0;
+exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.GologinSDKError = exports.WebUnlockerError = exports.GologinWebUnlockerClient = exports.WebUnlocker = void 0;
 var client_1 = require("./client");
 Object.defineProperty(exports, "WebUnlocker", { enumerable: true, get: function () { return client_1.WebUnlocker; } });
-Object.defineProperty(exports, "GoLoginWebUnlockerClient", { enumerable: true, get: function () { return client_1.GoLoginWebUnlockerClient; } });
+Object.defineProperty(exports, "GologinWebUnlockerClient", { enumerable: true, get: function () { return client_1.GologinWebUnlockerClient; } });
 var errors_1 = require("./errors");
 Object.defineProperty(exports, "WebUnlockerError", { enumerable: true, get: function () { return errors_1.WebUnlockerError; } });
-Object.defineProperty(exports, "GoLoginSDKError", { enumerable: true, get: function () { return errors_1.GoLoginSDKError; } });
+Object.defineProperty(exports, "GologinSDKError", { enumerable: true, get: function () { return errors_1.GologinSDKError; } });
 Object.defineProperty(exports, "AuthenticationError", { enumerable: true, get: function () { return errors_1.AuthenticationError; } });
 Object.defineProperty(exports, "RateLimitError", { enumerable: true, get: function () { return errors_1.RateLimitError; } });
 Object.defineProperty(exports, "APIError", { enumerable: true, get: function () { return errors_1.APIError; } });

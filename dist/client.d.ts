@@ -19,5 +19,5 @@ export declare class WebUnlocker {
     private toStatusError;
     private safeReadText;
 }
-export declare class GoLoginWebUnlockerClient extends WebUnlocker {
+export declare class GologinWebUnlockerClient extends WebUnlocker {
 }
