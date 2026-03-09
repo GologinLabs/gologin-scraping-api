@@ -1,5 +1,5 @@
 {
-  "name": "gologin-webunlocker-sdk",
+  "name": "@gologin/webunlocker",
   "version": "0.1.0",
   "description": "Minimal TypeScript SDK for GoLogin Web Unlocker scraping API",
   "main": "dist/index.js",
@@ -25,6 +25,9 @@
   "author": "GoLogin",
   "homepage": "https://gologin.com/web-unlocker",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   },
