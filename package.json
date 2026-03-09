@@ -1,5 +1,5 @@
 {
-  "name": "@gologin/webunlocker",
+  "name": "gologin-webunlocker",
   "version": "0.1.0",
   "description": "Minimal TypeScript SDK for GoLogin Web Unlocker scraping API",
   "main": "dist/index.js",

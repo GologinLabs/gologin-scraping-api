@@ -13,7 +13,7 @@ The backend response is raw HTML/text.
 ## Install
 
 ```bash
-npm install gologin-webunlocker-sdk
+npm install gologin-webunlocker
 ```
 
 ## CLI
@@ -49,7 +49,7 @@ GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example
 ## Quick Start
 
 ```ts
-import { WebUnlocker } from "gologin-webunlocker-sdk";
+import { WebUnlocker } from "gologin-webunlocker";
 
 const client = new WebUnlocker({
   apiKey: process.env.GOLOGIN_WEBUNLOCKER_API_KEY!
@@ -172,7 +172,7 @@ import {
   APIError,
   TimeoutError,
   NetworkError
-} from "gologin-webunlocker-sdk";
+} from "gologin-webunlocker";
 
 try {
   const client = new WebUnlocker({ apiKey: "wu_live_xxx" });
