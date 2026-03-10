@@ -16,6 +16,17 @@ The backend response is raw HTML/text.
 npm install gologin-webunlocker
 ```
 
+## Get API Key
+
+To get a Web Unlocker API key, create an account and complete onboarding at:
+
+- https://gologin.com/web-unlocker
+
+Then use the key in:
+
+- `apikey` request header
+- `GOLOGIN_WEBUNLOCKER_API_KEY` environment variable
+
 ## CLI
 
 After build/install, CLI command:
