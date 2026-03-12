@@ -16,6 +16,12 @@ The backend response is raw HTML/text.
 npm install gologin-webunlocker
 ```
 
+Install the CLI globally:
+
+```bash
+npm install -g gologin-webunlocker
+```
+
 ## Get API Key
 
 To get a Web Unlocker API key, create an account and complete onboarding at:
@@ -219,4 +225,20 @@ Error mapping:
 
 ```bash
 GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx npm run example
+```
+
+## Development
+
+```bash
+git clone https://github.com/GologinLabs/gologin-webunlocker.git
+cd gologin-webunlocker
+npm install
+npm run build
+```
+
+## Release
+
+```bash
+npm run release:check
+npm publish --access public
 ```

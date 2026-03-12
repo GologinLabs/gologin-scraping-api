@@ -1,6 +1,6 @@
 {
   "name": "gologin-webunlocker",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Minimal TypeScript SDK for Gologin Web Unlocker scraping API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,11 +8,17 @@
     "gologin-webunlocker": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prepare": "npm run build",
+    "test": "tsx --test tests/**/*.test.ts",
+    "release:check": "npm run typecheck && npm test && npm run build && npm pack --dry-run",
+    "prepublishOnly": "npm run release:check",
     "example": "tsx examples/basic.ts",
     "cli": "node dist/cli.js"
   },
@@ -23,7 +29,14 @@
     "scraping"
   ],
   "author": "Gologin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GologinLabs/gologin-webunlocker.git"
+  },
   "homepage": "https://gologin.com/web-unlocker",
+  "bugs": {
+    "url": "https://github.com/GologinLabs/gologin-webunlocker/issues"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
