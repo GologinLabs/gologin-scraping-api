@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("./client");
 const errors_1 = require("./errors");
+const pageAssessment_1 = require("./pageAssessment");
 function printUsage() {
     process.stderr.write([
         "Gologin Web Unlocker CLI",
@@ -12,8 +13,8 @@ function printUsage() {
         "",
         "Commands:",
         "  scrape     Output raw HTML/text from API response",
-        "  text       Output text derived from returned HTML",
-        "  markdown   Output markdown derived from returned HTML",
+        "  text       Output text derived from returned HTML (no JS rendering)",
+        "  markdown   Output markdown derived from returned HTML (no JS rendering)",
         "  json       Output JSON metadata derived from returned HTML",
         "",
         "Options:",
@@ -21,12 +22,14 @@ function printUsage() {
         "  --base-url <url>        Default: https://parsing.webunlocker.gologin.com",
         "  --timeout-ms <number>   Request timeout in ms",
         "  --max-retries <number>  Retry attempts",
+        "  --envelope              For json, print metadata + outcome + diagnostics instead of only data",
         "  -h, --help              Show help",
         "",
         "Examples:",
         "  gologin-webunlocker scrape https://example.com --api-key wu_live_xxx",
         "  gologin-webunlocker text https://example.com",
-        "  GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com"
+        "  GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com",
+        "  npx gologin-webunlocker text https://example.com"
     ].join("\n") + "\n");
 }
 function parseArgs(argv) {
@@ -56,6 +59,10 @@ function parseArgs(argv) {
         }
         if (token === "--max-retries") {
             parsed.options.maxRetries = Number(argv[++i]);
+            continue;
+        }
+        if (token === "--envelope") {
+            parsed.options.envelope = true;
             continue;
         }
         positional.push(token);
@@ -103,16 +110,39 @@ async function run() {
     }
     if (command === "text") {
         const result = await client.scrapeText(url, { timeoutMs: options.timeoutMs });
+        emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
         process.stdout.write(result.text + "\n");
         return;
     }
     if (command === "markdown") {
         const result = await client.scrapeMarkdown(url, { timeoutMs: options.timeoutMs });
+        emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
         process.stdout.write(result.markdown + "\n");
         return;
     }
     const result = await client.scrapeJSON(url, { timeoutMs: options.timeoutMs });
-    process.stdout.write(JSON.stringify(result.data, null, 2) + "\n");
+    emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
+    process.stdout.write(JSON.stringify(options.envelope
+        ? {
+            url: result.url,
+            status: result.status,
+            outcome: result.outcome,
+            outcomeReason: result.outcomeReason,
+            nextActionHint: result.nextActionHint,
+            diagnostics: result.diagnostics,
+            data: result.data
+        }
+        : result.data, null, 2) + "\n");
+}
+function emitOutcomeNotice(command, outcome, outcomeReason, nextActionHint) {
+    if (!outcome || outcome === "ok" || command === "scrape") {
+        return;
+    }
+    process.stderr.write(`Outcome: ${outcome}${outcomeReason ? ` - ${outcomeReason}` : ""}\n`);
+    const hint = (0, pageAssessment_1.describeNextActionHint)(nextActionHint);
+    if (hint) {
+        process.stderr.write(`${hint}\n`);
+    }
 }
 run().catch((error) => {
     if (error instanceof errors_1.WebUnlockerError) {

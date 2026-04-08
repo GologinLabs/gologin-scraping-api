@@ -4,6 +4,7 @@ exports.GologinWebUnlockerClient = exports.WebUnlocker = void 0;
 const errors_1 = require("./errors");
 const http_1 = require("./http");
 const utils_1 = require("./utils");
+const pageAssessment_1 = require("./pageAssessment");
 class WebUnlocker {
     apiKey;
     baseUrl;
@@ -67,23 +68,46 @@ class WebUnlocker {
     }
     async scrapeText(url, options = {}) {
         const scraped = await this.scrape(url, options);
+        const text = (0, utils_1.htmlToText)(scraped.content);
+        const assessment = (0, pageAssessment_1.assessHtmlPage)(scraped.content, text);
         return {
             ...scraped,
-            text: (0, utils_1.htmlToText)(scraped.content)
+            text,
+            outcome: assessment.outcome,
+            outcomeReason: assessment.outcomeReason,
+            nextActionHint: assessment.nextActionHint,
+            diagnostics: assessment.diagnostics
         };
     }
     async scrapeMarkdown(url, options = {}) {
         const scraped = await this.scrape(url, options);
+        const text = (0, utils_1.htmlToText)(scraped.content);
+        const markdown = (0, utils_1.htmlToMarkdown)(scraped.content);
+        const assessment = (0, pageAssessment_1.assessHtmlPage)(scraped.content, text);
         return {
             ...scraped,
-            markdown: (0, utils_1.htmlToMarkdown)(scraped.content)
+            markdown,
+            outcome: assessment.outcome,
+            outcomeReason: assessment.outcomeReason,
+            nextActionHint: assessment.nextActionHint,
+            diagnostics: assessment.diagnostics
         };
     }
     async scrapeJSON(url, options = {}) {
         const scraped = await this.scrape(url, options);
+        const data = (0, utils_1.htmlToStructuredData)(scraped.content);
+        const htmlAssessment = (0, pageAssessment_1.assessHtmlPage)(scraped.content, (0, utils_1.htmlToText)(scraped.content));
+        const structuredAssessment = (0, pageAssessment_1.assessStructuredPage)(data);
+        const outcome = structuredAssessment.outcome === "ok" ? htmlAssessment.outcome : structuredAssessment.outcome;
+        const outcomeReason = structuredAssessment.outcomeReason ?? htmlAssessment.outcomeReason;
+        const nextActionHint = structuredAssessment.nextActionHint ?? htmlAssessment.nextActionHint;
         return {
             ...scraped,
-            data: (0, utils_1.htmlToStructuredData)(scraped.content)
+            data,
+            outcome,
+            outcomeReason,
+            nextActionHint,
+            diagnostics: htmlAssessment.diagnostics
         };
     }
     async batchScrape(urls, options = {}) {
@@ -139,6 +163,9 @@ class WebUnlocker {
         catch {
             return "";
         }
+    }
+    assessHTML(html, readableText) {
+        return (0, pageAssessment_1.assessHtmlPage)(html, readableText);
     }
 }
 exports.WebUnlocker = WebUnlocker;

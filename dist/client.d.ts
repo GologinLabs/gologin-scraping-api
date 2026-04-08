@@ -1,4 +1,4 @@
-import { BatchScrapeOptions, ScrapeJSONResult, ScrapeMarkdownResult, WebUnlockerOptions, ScrapeOptions, ScrapeResult, ScrapeTextResult } from "./types";
+import { BatchScrapeOptions, ScrapeDiagnostics, ScrapeJSONResult, ScrapeMarkdownResult, WebUnlockerOptions, ScrapeOptions, ScrapeResult, ScrapeTextResult } from "./types";
 export declare class WebUnlocker {
     private readonly apiKey;
     private readonly baseUrl;
@@ -18,6 +18,12 @@ export declare class WebUnlocker {
     private assertValidTargetUrl;
     private toStatusError;
     private safeReadText;
+    assessHTML(html: string, readableText?: string): {
+        outcome: ScrapeResult["outcome"];
+        outcomeReason?: string;
+        nextActionHint?: ScrapeResult["nextActionHint"];
+        diagnostics: ScrapeDiagnostics;
+    };
 }
 export declare class GologinWebUnlockerClient extends WebUnlocker {
 }

@@ -1,8 +1,12 @@
 export { WebUnlocker, GologinWebUnlockerClient } from "./client";
+export { assessHtmlPage, assessStructuredPage, describeNextActionHint } from "./pageAssessment";
 export type {
   BatchScrapeOptions,
   WebUnlockerOptions,
   GologinWebUnlockerClientOptions,
+  PageOutcome,
+  NextActionHint,
+  ScrapeDiagnostics,
   ScrapeJSONData,
   ScrapeJSONResult,
   ScrapeMarkdownResult,

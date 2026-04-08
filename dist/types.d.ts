@@ -4,6 +4,15 @@ export type WebUnlockerOptions = {
     timeoutMs?: number;
     maxRetries?: number;
 };
+export type PageOutcome = "ok" | "empty" | "incomplete" | "client_rendered_likely" | "authwall" | "challenge" | "blocked";
+export type NextActionHint = "use_gologin_agent_browser" | "check_data_endpoints";
+export type ScrapeDiagnostics = {
+    contentLength: number;
+    scriptCount: number;
+    linkCount: number;
+    headingCount: number;
+    shellMarkersDetected: boolean;
+};
 export type GologinWebUnlockerClientOptions = WebUnlockerOptions;
 export type ScrapeOptions = {
     timeoutMs?: number;
@@ -18,6 +27,10 @@ export type ScrapeResult = {
     contentType?: string | null;
     status?: number | null;
     headers?: Record<string, string>;
+    outcome?: PageOutcome;
+    outcomeReason?: string;
+    nextActionHint?: NextActionHint;
+    diagnostics?: ScrapeDiagnostics;
 };
 export type ScrapeTextResult = ScrapeResult & {
     text: string;

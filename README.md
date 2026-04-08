@@ -1,6 +1,6 @@
 # Gologin Web Unlocker SDK (TypeScript)
 
-Minimal Node.js SDK for Gologin Web Unlocker scraping API.
+Minimal Node.js SDK and CLI for stateless page retrieval through Gologin Web Unlocker.
 
 The backend endpoint is:
 
@@ -9,6 +9,20 @@ The backend endpoint is:
 Authentication is sent via header: `apikey: <API_KEY>`.
 
 The backend response is raw HTML/text.
+
+Best fit:
+
+- bot-protected HTML pages
+- public JSON/data endpoints hidden behind basic protection
+- simple subprocess-style usage without a browser runtime
+
+Not the right fit when you need:
+
+- JavaScript rendering or hydrated DOM
+- network request inspection
+- clicks, typing, screenshots, or login flows
+
+For those cases, use `gologin-agent-browser` instead of expecting `webunlocker` to behave like a browser.
 
 ## Install
 
@@ -20,6 +34,17 @@ Install the CLI globally:
 
 ```bash
 npm install -g gologin-webunlocker
+```
+
+If the command is still not found after a global install:
+
+- use `npx gologin-webunlocker ...`
+- or add your global npm bin directory to `PATH`
+
+Example:
+
+```bash
+export PATH="$(npm config get prefix)/bin:$PATH"
 ```
 
 ## Get API Key
@@ -44,8 +69,8 @@ gologin-webunlocker <command> <url> [options]
 Commands:
 
 - `scrape` (raw HTML/text from API)
-- `text` (derived from HTML in SDK)
-- `markdown` (derived from HTML in SDK)
+- `text` (derived from returned HTML, no JS rendering)
+- `markdown` (derived from returned HTML, no JS rendering)
 - `json` (derived metadata from HTML in SDK)
 
 Options:
@@ -54,6 +79,7 @@ Options:
 - `--base-url <url>`
 - `--timeout-ms <number>`
 - `--max-retries <number>`
+- `--envelope` for `json`, to print metadata plus `outcome`, `nextActionHint`, and diagnostics
 
 Examples:
 
@@ -61,6 +87,8 @@ Examples:
 gologin-webunlocker scrape https://example.com --api-key wu_live_xxx
 GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker text https://example.com
 GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com
+GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com --envelope
+npx gologin-webunlocker text https://example.com --api-key wu_live_xxx
 ```
 
 ## Quick Start
@@ -145,11 +173,19 @@ console.log(requestUrl);
 These methods are derived from the HTML returned by the API.  
 They do not require additional backend features.
 
+Important:
+
+- they do not execute JavaScript
+- they only see the HTML returned by the upstream request
+- on JS-heavy sites they may mostly reflect the server-rendered shell rather than the final browser-visible page
+
 ### `scrapeText()` (derived from HTML)
 
 ```ts
 const result = await client.scrapeText("https://example.com");
 console.log(result.text.slice(0, 500));
+console.log(result.outcome);
+console.log(result.nextActionHint);
 ```
 
 ### `scrapeMarkdown()` (derived from HTML)
@@ -157,6 +193,7 @@ console.log(result.text.slice(0, 500));
 ```ts
 const result = await client.scrapeMarkdown("https://example.com");
 console.log(result.markdown.slice(0, 500));
+console.log(result.diagnostics);
 ```
 
 ### `scrapeJSON()` (derived from HTML)
@@ -166,7 +203,18 @@ const result = await client.scrapeJSON("https://example.com");
 console.log(result.data.title);
 console.log(result.data.description);
 console.log(result.data.links.slice(0, 5));
+console.log(result.outcome);
+console.log(result.outcomeReason);
 ```
+
+Derived methods now also return lightweight classification fields:
+
+- `outcome`: `ok`, `empty`, `incomplete`, `client_rendered_likely`, `authwall`, `challenge`, or `blocked`
+- `outcomeReason`: short explanation
+- `nextActionHint`: suggested next step such as `use_gologin_agent_browser`
+- `diagnostics`: content length, script count, link count, heading count, and shell-marker detection
+
+This is intended to tell you when Web Unlocker probably hit an HTML shell or a gated page instead of a complete rendered page.
 
 ### `batchScrape()` (client-side helper)
 
@@ -242,3 +290,9 @@ npm run build
 npm run release:check
 npm publish --access public
 ```
+
+## Routing Rule Of Thumb
+
+- Use `gologin-webunlocker` when the target is likely server-rendered HTML or an exposed data endpoint.
+- Use `gologin-agent-browser` when useful content appears only after hydration, client-side requests, or interaction.
+- If `outcome` comes back as `client_rendered_likely`, `authwall`, `challenge`, or `blocked`, treat that as a signal to escalate into a browser tool rather than retrying the same stateless extraction blindly.

@@ -7,6 +7,7 @@ import {
 import { HttpClient } from "./http";
 import {
   BatchScrapeOptions,
+  ScrapeDiagnostics,
   ScrapeJSONResult,
   ScrapeMarkdownResult,
   WebUnlockerOptions,
@@ -25,6 +26,10 @@ import {
   normalizeBaseUrl,
   truncate
 } from "./utils";
+import {
+  assessHtmlPage,
+  assessStructuredPage
+} from "./pageAssessment";
 
 export class WebUnlocker {
   private readonly apiKey: string;
@@ -104,10 +109,16 @@ export class WebUnlocker {
 
   async scrapeText(url: string, options: ScrapeOptions = {}): Promise<ScrapeTextResult> {
     const scraped = await this.scrape(url, options);
+    const text = htmlToText(scraped.content);
+    const assessment = assessHtmlPage(scraped.content, text);
 
     return {
       ...scraped,
-      text: htmlToText(scraped.content)
+      text,
+      outcome: assessment.outcome,
+      outcomeReason: assessment.outcomeReason,
+      nextActionHint: assessment.nextActionHint,
+      diagnostics: assessment.diagnostics
     };
   }
 
@@ -116,19 +127,36 @@ export class WebUnlocker {
     options: ScrapeOptions = {}
   ): Promise<ScrapeMarkdownResult> {
     const scraped = await this.scrape(url, options);
+    const text = htmlToText(scraped.content);
+    const markdown = htmlToMarkdown(scraped.content);
+    const assessment = assessHtmlPage(scraped.content, text);
 
     return {
       ...scraped,
-      markdown: htmlToMarkdown(scraped.content)
+      markdown,
+      outcome: assessment.outcome,
+      outcomeReason: assessment.outcomeReason,
+      nextActionHint: assessment.nextActionHint,
+      diagnostics: assessment.diagnostics
     };
   }
 
   async scrapeJSON(url: string, options: ScrapeOptions = {}): Promise<ScrapeJSONResult> {
     const scraped = await this.scrape(url, options);
+    const data = htmlToStructuredData(scraped.content);
+    const htmlAssessment = assessHtmlPage(scraped.content, htmlToText(scraped.content));
+    const structuredAssessment = assessStructuredPage(data);
+    const outcome = structuredAssessment.outcome === "ok" ? htmlAssessment.outcome : structuredAssessment.outcome;
+    const outcomeReason = structuredAssessment.outcomeReason ?? htmlAssessment.outcomeReason;
+    const nextActionHint = structuredAssessment.nextActionHint ?? htmlAssessment.nextActionHint;
 
     return {
       ...scraped,
-      data: htmlToStructuredData(scraped.content)
+      data,
+      outcome,
+      outcomeReason,
+      nextActionHint,
+      diagnostics: htmlAssessment.diagnostics
     };
   }
 
@@ -200,6 +228,15 @@ export class WebUnlocker {
     } catch {
       return "";
     }
+  }
+
+  assessHTML(html: string, readableText?: string): {
+    outcome: ScrapeResult["outcome"];
+    outcomeReason?: string;
+    nextActionHint?: ScrapeResult["nextActionHint"];
+    diagnostics: ScrapeDiagnostics;
+  } {
+    return assessHtmlPage(html, readableText);
   }
 }
 

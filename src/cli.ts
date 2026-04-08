@@ -2,12 +2,15 @@
 
 import { WebUnlocker } from "./client";
 import { WebUnlockerError } from "./errors";
+import { describeNextActionHint } from "./pageAssessment";
+import type { NextActionHint, PageOutcome } from "./types";
 
 type CliOptions = {
   apiKey?: string;
   baseUrl?: string;
   timeoutMs?: number;
   maxRetries?: number;
+  envelope?: boolean;
 };
 
 type ParsedArgs = {
@@ -27,8 +30,8 @@ function printUsage(): void {
       "",
       "Commands:",
       "  scrape     Output raw HTML/text from API response",
-      "  text       Output text derived from returned HTML",
-      "  markdown   Output markdown derived from returned HTML",
+      "  text       Output text derived from returned HTML (no JS rendering)",
+      "  markdown   Output markdown derived from returned HTML (no JS rendering)",
       "  json       Output JSON metadata derived from returned HTML",
       "",
       "Options:",
@@ -36,12 +39,14 @@ function printUsage(): void {
       "  --base-url <url>        Default: https://parsing.webunlocker.gologin.com",
       "  --timeout-ms <number>   Request timeout in ms",
       "  --max-retries <number>  Retry attempts",
+      "  --envelope              For json, print metadata + outcome + diagnostics instead of only data",
       "  -h, --help              Show help",
       "",
       "Examples:",
       "  gologin-webunlocker scrape https://example.com --api-key wu_live_xxx",
       "  gologin-webunlocker text https://example.com",
-      "  GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com"
+      "  GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com",
+      "  npx gologin-webunlocker text https://example.com"
     ].join("\n") + "\n"
   );
 }
@@ -80,6 +85,11 @@ function parseArgs(argv: string[]): ParsedArgs {
 
     if (token === "--max-retries") {
       parsed.options.maxRetries = Number(argv[++i]);
+      continue;
+    }
+
+    if (token === "--envelope") {
+      parsed.options.envelope = true;
       continue;
     }
 
@@ -138,18 +148,54 @@ async function run(): Promise<void> {
 
   if (command === "text") {
     const result = await client.scrapeText(url, { timeoutMs: options.timeoutMs });
+    emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
     process.stdout.write(result.text + "\n");
     return;
   }
 
   if (command === "markdown") {
     const result = await client.scrapeMarkdown(url, { timeoutMs: options.timeoutMs });
+    emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
     process.stdout.write(result.markdown + "\n");
     return;
   }
 
   const result = await client.scrapeJSON(url, { timeoutMs: options.timeoutMs });
-  process.stdout.write(JSON.stringify(result.data, null, 2) + "\n");
+  emitOutcomeNotice(command, result.outcome, result.outcomeReason, result.nextActionHint);
+  process.stdout.write(
+    JSON.stringify(
+      options.envelope
+        ? {
+            url: result.url,
+            status: result.status,
+            outcome: result.outcome,
+            outcomeReason: result.outcomeReason,
+            nextActionHint: result.nextActionHint,
+            diagnostics: result.diagnostics,
+            data: result.data
+          }
+        : result.data,
+      null,
+      2
+    ) + "\n"
+  );
+}
+
+function emitOutcomeNotice(
+  command: "scrape" | "text" | "markdown" | "json",
+  outcome?: PageOutcome,
+  outcomeReason?: string,
+  nextActionHint?: NextActionHint
+): void {
+  if (!outcome || outcome === "ok" || command === "scrape") {
+    return;
+  }
+
+  process.stderr.write(`Outcome: ${outcome}${outcomeReason ? ` - ${outcomeReason}` : ""}\n`);
+  const hint = describeNextActionHint(nextActionHint);
+  if (hint) {
+    process.stderr.write(`${hint}\n`);
+  }
 }
 
 run().catch((error) => {
