@@ -26,19 +26,21 @@ For those cases, use `gologin-agent-browser` instead of expecting a stateless sc
 
 ## Install
 
+The product and CLI are now named **GoLogin Scraping API**. The npm package currently remains `gologin-webunlocker` as a compatibility package until the npm account can create the new `gologin-scraping-api` package name.
+
 ```bash
-npm install gologin-scraping-api
+npm install gologin-webunlocker
 ```
 
 Install the CLI globally:
 
 ```bash
-npm install -g gologin-scraping-api
+npm install -g gologin-webunlocker
 ```
 
 If the command is still not found after a global install:
 
-- use `npx gologin-scraping-api ...`
+- use `npx gologin-webunlocker ...`
 - or add your global npm bin directory to `PATH`
 
 Example:
@@ -49,6 +51,7 @@ export PATH="$(npm config get prefix)/bin:$PATH"
 
 Compatibility:
 
+- The primary CLI command is `gologin-scraping-api`.
 - The old `gologin-webunlocker` CLI name is still shipped as an alias by this package.
 - The old `WebUnlocker` class is still exported as an alias for `ScrapingApi`.
 - The old `GOLOGIN_WEBUNLOCKER_API_KEY` env var is still accepted as an alias for `GOLOGIN_SCRAPING_API_KEY`.
@@ -91,13 +94,13 @@ gologin-scraping-api scrape https://example.com --api-key wu_live_xxx
 GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api text https://example.com
 GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com
 GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com --envelope
-npx gologin-scraping-api text https://example.com --api-key wu_live_xxx
+npx gologin-webunlocker text https://example.com --api-key wu_live_xxx
 ```
 
 ## Quick Start
 
 ```ts
-import { ScrapingApi } from "gologin-scraping-api";
+import { ScrapingApi } from "gologin-webunlocker";
 
 const client = new ScrapingApi({
   apiKey: process.env.GOLOGIN_SCRAPING_API_KEY!
@@ -111,7 +114,7 @@ console.log(result.content.slice(0, 500));
 Backward-compatible import:
 
 ```ts
-import { WebUnlocker } from "gologin-scraping-api";
+import { WebUnlocker } from "gologin-webunlocker";
 ```
 
 ## Constructor Options
@@ -233,7 +236,7 @@ import {
   APIError,
   TimeoutError,
   NetworkError
-} from "gologin-scraping-api";
+} from "gologin-webunlocker";
 
 try {
   const client = new ScrapingApi({ apiKey: "wu_live_xxx" });

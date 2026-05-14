@@ -46,7 +46,7 @@ function printUsage(): void {
       "  gologin-scraping-api scrape https://example.com --api-key wu_live_xxx",
       "  gologin-scraping-api text https://example.com",
       "  GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com",
-      "  npx gologin-scraping-api text https://example.com",
+      "  npx gologin-webunlocker text https://example.com",
       "",
       "Compatibility:",
       "  gologin-webunlocker and GOLOGIN_WEBUNLOCKER_API_KEY still work as aliases."

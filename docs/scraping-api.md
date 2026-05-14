@@ -22,11 +22,11 @@ curl "https://parsing.webunlocker.gologin.com/v1/scrape?url=https%3A%2F%2Fexampl
 ## SDK
 
 ```bash
-npm i gologin-scraping-api
+npm i gologin-webunlocker
 ```
 
 ```ts
-import { ScrapingApi } from "gologin-scraping-api";
+import { ScrapingApi } from "gologin-webunlocker";
 
 const client = new ScrapingApi({
   apiKey: process.env.GOLOGIN_SCRAPING_API_KEY!
@@ -55,4 +55,4 @@ These old names still work for existing users:
 - `WebUnlocker` SDK class alias
 - `GOLOGIN_WEBUNLOCKER_API_KEY` env var alias
 
-New docs and examples should use `Scraping API`, `gologin-scraping-api`, `ScrapingApi`, and `GOLOGIN_SCRAPING_API_KEY`.
+New docs and examples should use `Scraping API`, `gologin-scraping-api`, `ScrapingApi`, and `GOLOGIN_SCRAPING_API_KEY`. The npm install/import package remains `gologin-webunlocker` until the npm account can create the new package name.

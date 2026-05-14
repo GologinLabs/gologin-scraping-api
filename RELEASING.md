@@ -3,8 +3,7 @@
 1. Confirm package metadata:
 
    ```bash
-   npm view gologin-scraping-api version
-   npm view gologin-webunlocker deprecated
+   npm view gologin-webunlocker version bin --json
    ```
 
 2. Run release checks:
@@ -22,14 +21,13 @@
 4. Verify:
 
    ```bash
-   npm view gologin-scraping-api version bin --json
-   npm dist-tag ls gologin-scraping-api
+   npm view gologin-webunlocker version bin --json
+   npm dist-tag ls gologin-webunlocker
    ```
 
 Compatibility notes:
 
-- The published npm package name is `gologin-scraping-api`.
+- The published npm package name is currently `gologin-webunlocker`.
 - The installed primary CLI command is `gologin-scraping-api`.
 - The old `gologin-webunlocker` CLI command is still included as a compatibility alias.
-- The recommended SDK install is `npm install gologin-scraping-api`.
-- The old `gologin-webunlocker` package should stay deprecated and point users to `gologin-scraping-api`.
+- The recommended SDK install is `npm install gologin-webunlocker` until the npm account can create the new `gologin-scraping-api` package name.
