@@ -1,9 +1,11 @@
-export type WebUnlockerOptions = {
+export type ScrapingApiOptions = {
   apiKey: string;
   baseUrl?: string;
   timeoutMs?: number;
   maxRetries?: number;
 };
+
+export type WebUnlockerOptions = ScrapingApiOptions;
 
 export type PageOutcome =
   | "ok"
@@ -26,7 +28,8 @@ export type ScrapeDiagnostics = {
   shellMarkersDetected: boolean;
 };
 
-export type GologinWebUnlockerClientOptions = WebUnlockerOptions;
+export type GologinScrapingApiClientOptions = ScrapingApiOptions;
+export type GologinWebUnlockerClientOptions = ScrapingApiOptions;
 
 export type ScrapeOptions = {
   timeoutMs?: number;

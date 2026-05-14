@@ -1,11 +1,11 @@
-import { BatchScrapeOptions, ScrapeDiagnostics, ScrapeJSONResult, ScrapeMarkdownResult, WebUnlockerOptions, ScrapeOptions, ScrapeResult, ScrapeTextResult } from "./types";
-export declare class WebUnlocker {
+import { BatchScrapeOptions, ScrapeDiagnostics, ScrapeJSONResult, ScrapeMarkdownResult, ScrapingApiOptions, ScrapeOptions, ScrapeResult, ScrapeTextResult } from "./types";
+export declare class ScrapingApi {
     private readonly apiKey;
     private readonly baseUrl;
     private readonly timeoutMs;
     private readonly maxRetries;
     private readonly httpClient;
-    constructor(options: WebUnlockerOptions);
+    constructor(options: ScrapingApiOptions);
     validateConfig(): void;
     getDefaultHeaders(): Record<string, string>;
     buildScrapeUrl(url: string): string;
@@ -25,5 +25,9 @@ export declare class WebUnlocker {
         diagnostics: ScrapeDiagnostics;
     };
 }
-export declare class GologinWebUnlockerClient extends WebUnlocker {
+export declare class GologinScrapingApiClient extends ScrapingApi {
+}
+export declare class WebUnlocker extends ScrapingApi {
+}
+export declare class GologinWebUnlockerClient extends ScrapingApi {
 }

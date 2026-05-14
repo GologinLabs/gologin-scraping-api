@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GologinWebUnlockerClient = exports.WebUnlocker = void 0;
+exports.GologinWebUnlockerClient = exports.WebUnlocker = exports.GologinScrapingApiClient = exports.ScrapingApi = void 0;
 const errors_1 = require("./errors");
 const http_1 = require("./http");
 const utils_1 = require("./utils");
 const pageAssessment_1 = require("./pageAssessment");
-class WebUnlocker {
+class ScrapingApi {
     apiKey;
     baseUrl;
     timeoutMs;
@@ -24,13 +24,13 @@ class WebUnlocker {
     }
     validateConfig() {
         if (!this.apiKey || this.apiKey.trim().length === 0) {
-            throw new errors_1.WebUnlockerError("apiKey is required");
+            throw new errors_1.ScrapingApiError("apiKey is required");
         }
         if (this.timeoutMs <= 0) {
-            throw new errors_1.WebUnlockerError("timeoutMs must be greater than 0");
+            throw new errors_1.ScrapingApiError("timeoutMs must be greater than 0");
         }
         if (!Number.isInteger(this.maxRetries) || this.maxRetries < 0) {
-            throw new errors_1.WebUnlockerError("maxRetries must be an integer >= 0");
+            throw new errors_1.ScrapingApiError("maxRetries must be an integer >= 0");
         }
     }
     getDefaultHeaders() {
@@ -131,13 +131,13 @@ class WebUnlocker {
     }
     assertValidTargetUrl(url) {
         if (!url || url.trim().length === 0) {
-            throw new errors_1.WebUnlockerError("url is required");
+            throw new errors_1.ScrapingApiError("url is required");
         }
         try {
             new URL(url);
         }
         catch {
-            throw new errors_1.WebUnlockerError("url must be a valid absolute URL");
+            throw new errors_1.ScrapingApiError("url must be a valid absolute URL");
         }
     }
     async toStatusError(response, url) {
@@ -168,8 +168,14 @@ class WebUnlocker {
         return (0, pageAssessment_1.assessHtmlPage)(html, readableText);
     }
 }
+exports.ScrapingApi = ScrapingApi;
+class GologinScrapingApiClient extends ScrapingApi {
+}
+exports.GologinScrapingApiClient = GologinScrapingApiClient;
+// Backward-compatible aliases.
+class WebUnlocker extends ScrapingApi {
+}
 exports.WebUnlocker = WebUnlocker;
-// Backward-compatible alias.
-class GologinWebUnlockerClient extends WebUnlocker {
+class GologinWebUnlockerClient extends ScrapingApi {
 }
 exports.GologinWebUnlockerClient = GologinWebUnlockerClient;

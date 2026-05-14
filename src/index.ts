@@ -1,7 +1,14 @@
-export { WebUnlocker, GologinWebUnlockerClient } from "./client";
+export {
+  ScrapingApi,
+  GologinScrapingApiClient,
+  WebUnlocker,
+  GologinWebUnlockerClient
+} from "./client";
 export { assessHtmlPage, assessStructuredPage, describeNextActionHint } from "./pageAssessment";
 export type {
   BatchScrapeOptions,
+  ScrapingApiOptions,
+  GologinScrapingApiClientOptions,
   WebUnlockerOptions,
   GologinWebUnlockerClientOptions,
   PageOutcome,
@@ -15,6 +22,7 @@ export type {
   ScrapeTextResult
 } from "./types";
 export {
+  ScrapingApiError,
   WebUnlockerError,
   GologinSDKError,
   AuthenticationError,

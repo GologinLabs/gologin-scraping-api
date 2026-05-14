@@ -1,10 +1,11 @@
 {
-  "name": "gologin-webunlocker",
-  "version": "0.2.2",
-  "description": "Minimal TypeScript SDK for Gologin Web Unlocker scraping API",
+  "name": "gologin-scraping-api",
+  "version": "0.3.0",
+  "description": "TypeScript SDK and CLI for the GoLogin Scraping API",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
+    "gologin-scraping-api": "dist/cli.js",
     "gologin-webunlocker": "dist/cli.js"
   },
   "files": [
@@ -24,18 +25,19 @@
   },
   "keywords": [
     "gologin",
-    "webunlocker",
+    "scraping-api",
+    "scraping",
     "sdk",
-    "scraping"
+    "webunlocker"
   ],
   "author": "Gologin",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GologinLabs/gologin-webunlocker.git"
+    "url": "git+https://github.com/GologinLabs/gologin-scraping-api.git"
   },
-  "homepage": "https://gologin.com/web-unlocker",
+  "homepage": "https://gologin.com",
   "bugs": {
-    "url": "https://github.com/GologinLabs/gologin-webunlocker/issues"
+    "url": "https://github.com/GologinLabs/gologin-scraping-api/issues"
   },
   "license": "MIT",
   "publishConfig": {

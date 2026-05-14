@@ -6,10 +6,10 @@ const errors_1 = require("./errors");
 const pageAssessment_1 = require("./pageAssessment");
 function printUsage() {
     process.stderr.write([
-        "Gologin Web Unlocker CLI",
+        "GoLogin Scraping API CLI",
         "",
         "Usage:",
-        "  gologin-webunlocker <command> <url> [options]",
+        "  gologin-scraping-api <command> <url> [options]",
         "",
         "Commands:",
         "  scrape     Output raw HTML/text from API response",
@@ -18,7 +18,7 @@ function printUsage() {
         "  json       Output JSON metadata derived from returned HTML",
         "",
         "Options:",
-        "  --api-key <key>         API key (or set GOLOGIN_WEBUNLOCKER_API_KEY)",
+        "  --api-key <key>         API key (or set GOLOGIN_SCRAPING_API_KEY)",
         "  --base-url <url>        Default: https://parsing.webunlocker.gologin.com",
         "  --timeout-ms <number>   Request timeout in ms",
         "  --max-retries <number>  Retry attempts",
@@ -26,10 +26,13 @@ function printUsage() {
         "  -h, --help              Show help",
         "",
         "Examples:",
-        "  gologin-webunlocker scrape https://example.com --api-key wu_live_xxx",
-        "  gologin-webunlocker text https://example.com",
-        "  GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com",
-        "  npx gologin-webunlocker text https://example.com"
+        "  gologin-scraping-api scrape https://example.com --api-key wu_live_xxx",
+        "  gologin-scraping-api text https://example.com",
+        "  GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com",
+        "  npx gologin-scraping-api text https://example.com",
+        "",
+        "Compatibility:",
+        "  gologin-webunlocker and GOLOGIN_WEBUNLOCKER_API_KEY still work as aliases."
     ].join("\n") + "\n");
 }
 function parseArgs(argv) {
@@ -92,12 +95,14 @@ async function run() {
         printUsage();
         process.exit(1);
     }
-    const apiKey = options.apiKey ?? process.env.GOLOGIN_WEBUNLOCKER_API_KEY;
+    const apiKey = options.apiKey ??
+        process.env.GOLOGIN_SCRAPING_API_KEY ??
+        process.env.GOLOGIN_WEBUNLOCKER_API_KEY;
     if (!apiKey) {
-        process.stderr.write("Missing API key. Use --api-key or GOLOGIN_WEBUNLOCKER_API_KEY.\n");
+        process.stderr.write("Missing API key. Use --api-key or GOLOGIN_SCRAPING_API_KEY. GOLOGIN_WEBUNLOCKER_API_KEY is still accepted as a legacy alias.\n");
         process.exit(1);
     }
-    const client = new client_1.WebUnlocker({
+    const client = new client_1.ScrapingApi({
         apiKey,
         baseUrl: options.baseUrl,
         timeoutMs: options.timeoutMs,
@@ -145,7 +150,7 @@ function emitOutcomeNotice(command, outcome, outcomeReason, nextActionHint) {
     }
 }
 run().catch((error) => {
-    if (error instanceof errors_1.WebUnlockerError) {
+    if (error instanceof errors_1.ScrapingApiError) {
         process.stderr.write(`${error.name}: ${error.message}\n`);
     }
     else if (error instanceof Error) {

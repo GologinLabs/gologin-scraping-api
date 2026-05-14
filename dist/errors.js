@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GologinSDKError = exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.WebUnlockerError = void 0;
-class WebUnlockerError extends Error {
+exports.GologinSDKError = exports.WebUnlockerError = exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.ScrapingApiError = void 0;
+class ScrapingApiError extends Error {
     status;
     url;
     body;
     cause;
     constructor(message, context = {}) {
         super(message);
-        this.name = "WebUnlockerError";
+        this.name = "ScrapingApiError";
         this.status = context.status;
         this.url = context.url;
         this.body = context.body;
@@ -16,36 +16,37 @@ class WebUnlockerError extends Error {
         Object.setPrototypeOf(this, new.target.prototype);
     }
 }
-exports.WebUnlockerError = WebUnlockerError;
-class AuthenticationError extends WebUnlockerError {
+exports.ScrapingApiError = ScrapingApiError;
+exports.WebUnlockerError = ScrapingApiError;
+class AuthenticationError extends ScrapingApiError {
     constructor(message, context = {}) {
         super(message, context);
         this.name = "AuthenticationError";
     }
 }
 exports.AuthenticationError = AuthenticationError;
-class RateLimitError extends WebUnlockerError {
+class RateLimitError extends ScrapingApiError {
     constructor(message, context = {}) {
         super(message, context);
         this.name = "RateLimitError";
     }
 }
 exports.RateLimitError = RateLimitError;
-class APIError extends WebUnlockerError {
+class APIError extends ScrapingApiError {
     constructor(message, context = {}) {
         super(message, context);
         this.name = "APIError";
     }
 }
 exports.APIError = APIError;
-class TimeoutError extends WebUnlockerError {
+class TimeoutError extends ScrapingApiError {
     constructor(message, context = {}) {
         super(message, context);
         this.name = "TimeoutError";
     }
 }
 exports.TimeoutError = TimeoutError;
-class NetworkError extends WebUnlockerError {
+class NetworkError extends ScrapingApiError {
     constructor(message, context = {}) {
         super(message, context);
         this.name = "NetworkError";
@@ -53,6 +54,6 @@ class NetworkError extends WebUnlockerError {
 }
 exports.NetworkError = NetworkError;
 // Backward-compatible alias.
-class GologinSDKError extends WebUnlockerError {
+class GologinSDKError extends ScrapingApiError {
 }
 exports.GologinSDKError = GologinSDKError;

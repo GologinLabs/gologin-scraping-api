@@ -1,6 +1,6 @@
-# Gologin Web Unlocker SDK (TypeScript)
+# GoLogin Scraping API SDK (TypeScript)
 
-Minimal Node.js SDK and CLI for stateless page retrieval through Gologin Web Unlocker.
+Minimal Node.js SDK and CLI for stateless page retrieval through the GoLogin Scraping API.
 
 The backend endpoint is:
 
@@ -22,23 +22,23 @@ Not the right fit when you need:
 - network request inspection
 - clicks, typing, screenshots, or login flows
 
-For those cases, use `gologin-agent-browser` instead of expecting `webunlocker` to behave like a browser.
+For those cases, use `gologin-agent-browser` instead of expecting a stateless scraping request to behave like a browser.
 
 ## Install
 
 ```bash
-npm install gologin-webunlocker
+npm install gologin-scraping-api
 ```
 
 Install the CLI globally:
 
 ```bash
-npm install -g gologin-webunlocker
+npm install -g gologin-scraping-api
 ```
 
 If the command is still not found after a global install:
 
-- use `npx gologin-webunlocker ...`
+- use `npx gologin-scraping-api ...`
 - or add your global npm bin directory to `PATH`
 
 Example:
@@ -47,23 +47,26 @@ Example:
 export PATH="$(npm config get prefix)/bin:$PATH"
 ```
 
+Compatibility:
+
+- The old `gologin-webunlocker` CLI name is still shipped as an alias by this package.
+- The old `WebUnlocker` class is still exported as an alias for `ScrapingApi`.
+- The old `GOLOGIN_WEBUNLOCKER_API_KEY` env var is still accepted as an alias for `GOLOGIN_SCRAPING_API_KEY`.
+
 ## Get API Key
 
-To get a Web Unlocker API key, create an account and complete onboarding at:
-
-- https://gologin.com/web-unlocker
-
-Then use the key in:
+Use your GoLogin Scraping API key in:
 
 - `apikey` request header
-- `GOLOGIN_WEBUNLOCKER_API_KEY` environment variable
+- `GOLOGIN_SCRAPING_API_KEY` environment variable
+- `GOLOGIN_WEBUNLOCKER_API_KEY` legacy environment variable
 
 ## CLI
 
 After build/install, CLI command:
 
 ```bash
-gologin-webunlocker <command> <url> [options]
+gologin-scraping-api <command> <url> [options]
 ```
 
 Commands:
@@ -75,7 +78,7 @@ Commands:
 
 Options:
 
-- `--api-key <key>` or `GOLOGIN_WEBUNLOCKER_API_KEY`
+- `--api-key <key>` or `GOLOGIN_SCRAPING_API_KEY`
 - `--base-url <url>`
 - `--timeout-ms <number>`
 - `--max-retries <number>`
@@ -84,20 +87,20 @@ Options:
 Examples:
 
 ```bash
-gologin-webunlocker scrape https://example.com --api-key wu_live_xxx
-GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker text https://example.com
-GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com
-GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx gologin-webunlocker json https://example.com --envelope
-npx gologin-webunlocker text https://example.com --api-key wu_live_xxx
+gologin-scraping-api scrape https://example.com --api-key wu_live_xxx
+GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api text https://example.com
+GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com
+GOLOGIN_SCRAPING_API_KEY=wu_live_xxx gologin-scraping-api json https://example.com --envelope
+npx gologin-scraping-api text https://example.com --api-key wu_live_xxx
 ```
 
 ## Quick Start
 
 ```ts
-import { WebUnlocker } from "gologin-webunlocker";
+import { ScrapingApi } from "gologin-scraping-api";
 
-const client = new WebUnlocker({
-  apiKey: process.env.GOLOGIN_WEBUNLOCKER_API_KEY!
+const client = new ScrapingApi({
+  apiKey: process.env.GOLOGIN_SCRAPING_API_KEY!
 });
 
 const result = await client.scrape("https://example.com");
@@ -105,10 +108,16 @@ console.log(result.status);
 console.log(result.content.slice(0, 500));
 ```
 
+Backward-compatible import:
+
+```ts
+import { WebUnlocker } from "gologin-scraping-api";
+```
+
 ## Constructor Options
 
 ```ts
-new WebUnlocker({
+new ScrapingApi({
   apiKey: "wu_live_xxx",
   baseUrl: "https://parsing.webunlocker.gologin.com",
   timeoutMs: 15000,
@@ -123,8 +132,7 @@ new WebUnlocker({
 
 ## Normalized `scrape()` Response
 
-`/v1/scrape` returns raw HTML/text from the upstream page.  
-The SDK wraps it into a normalized object:
+`/v1/scrape` returns raw HTML/text from the upstream page. The SDK wraps it into a normalized object:
 
 ```ts
 type ScrapeResult = {
@@ -139,15 +147,6 @@ type ScrapeResult = {
 
 `scrape()` throws typed errors for non-2xx responses.
 
-Example:
-
-```ts
-const result = await client.scrape("https://example.com");
-console.log(result.status);
-console.log(result.contentType);
-console.log(result.content.slice(0, 500));
-```
-
 ## `scrapeRaw()` Example
 
 Use `scrapeRaw()` when you need direct access to native `fetch` `Response`:
@@ -157,8 +156,6 @@ const response = await client.scrapeRaw("https://example.com");
 console.log(response.status);
 const html = await response.text();
 ```
-
-`scrapeRaw()` returns the raw `Response` object as-is (including non-2xx statuses).
 
 ## `buildScrapeUrl()` Example
 
@@ -170,8 +167,7 @@ console.log(requestUrl);
 
 ## SDK-Side Derived Methods
 
-These methods are derived from the HTML returned by the API.  
-They do not require additional backend features.
+These methods are derived from the HTML returned by the API. They do not require additional backend features.
 
 Important:
 
@@ -179,7 +175,7 @@ Important:
 - they only see the HTML returned by the upstream request
 - on JS-heavy sites they may mostly reflect the server-rendered shell rather than the final browser-visible page
 
-### `scrapeText()` (derived from HTML)
+### `scrapeText()`
 
 ```ts
 const result = await client.scrapeText("https://example.com");
@@ -188,7 +184,7 @@ console.log(result.outcome);
 console.log(result.nextActionHint);
 ```
 
-### `scrapeMarkdown()` (derived from HTML)
+### `scrapeMarkdown()`
 
 ```ts
 const result = await client.scrapeMarkdown("https://example.com");
@@ -196,7 +192,7 @@ console.log(result.markdown.slice(0, 500));
 console.log(result.diagnostics);
 ```
 
-### `scrapeJSON()` (derived from HTML)
+### `scrapeJSON()`
 
 ```ts
 const result = await client.scrapeJSON("https://example.com");
@@ -207,16 +203,16 @@ console.log(result.outcome);
 console.log(result.outcomeReason);
 ```
 
-Derived methods now also return lightweight classification fields:
+Derived methods also return lightweight classification fields:
 
 - `outcome`: `ok`, `empty`, `incomplete`, `client_rendered_likely`, `authwall`, `challenge`, or `blocked`
 - `outcomeReason`: short explanation
 - `nextActionHint`: suggested next step such as `use_gologin_agent_browser`
 - `diagnostics`: content length, script count, link count, heading count, and shell-marker detection
 
-This is intended to tell you when Web Unlocker probably hit an HTML shell or a gated page instead of a complete rendered page.
+This is intended to tell you when the Scraping API probably hit an HTML shell or a gated page instead of complete rendered content.
 
-### `batchScrape()` (client-side helper)
+### `batchScrape()`
 
 ```ts
 const results = await client.batchScrape(
@@ -230,17 +226,17 @@ console.log(results.map((r) => ({ url: r.url, status: r.status })));
 
 ```ts
 import {
-  WebUnlocker,
-  WebUnlockerError,
+  ScrapingApi,
+  ScrapingApiError,
   AuthenticationError,
   RateLimitError,
   APIError,
   TimeoutError,
   NetworkError
-} from "gologin-webunlocker";
+} from "gologin-scraping-api";
 
 try {
-  const client = new WebUnlocker({ apiKey: "wu_live_xxx" });
+  const client = new ScrapingApi({ apiKey: "wu_live_xxx" });
   await client.scrape("https://example.com");
 } catch (error) {
   if (error instanceof AuthenticationError) {
@@ -253,7 +249,7 @@ try {
     console.error("Network failure");
   } else if (error instanceof APIError) {
     console.error("Server/API error");
-  } else if (error instanceof WebUnlockerError) {
+  } else if (error instanceof ScrapingApiError) {
     console.error("SDK error");
   } else {
     console.error("Unknown error", error);
@@ -272,14 +268,14 @@ Error mapping:
 ## Local Example
 
 ```bash
-GOLOGIN_WEBUNLOCKER_API_KEY=wu_live_xxx npm run example
+GOLOGIN_SCRAPING_API_KEY=wu_live_xxx npm run example
 ```
 
 ## Development
 
 ```bash
-git clone https://github.com/GologinLabs/gologin-webunlocker.git
-cd gologin-webunlocker
+git clone https://github.com/GologinLabs/gologin-scraping-api.git
+cd gologin-scraping-api
 npm install
 npm run build
 ```
@@ -293,6 +289,6 @@ npm publish --access public
 
 ## Routing Rule Of Thumb
 
-- Use `gologin-webunlocker` when the target is likely server-rendered HTML or an exposed data endpoint.
+- Use `gologin-scraping-api` when the target is likely server-rendered HTML or an exposed data endpoint.
 - Use `gologin-agent-browser` when useful content appears only after hydration, client-side requests, or interaction.
 - If `outcome` comes back as `client_rendered_likely`, `authwall`, `challenge`, or `blocked`, treat that as a signal to escalate into a browser tool rather than retrying the same stateless extraction blindly.

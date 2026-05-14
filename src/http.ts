@@ -1,7 +1,7 @@
 import {
   NetworkError,
   TimeoutError,
-  WebUnlockerError
+  ScrapingApiError
 } from "./errors";
 import { HttpClientOptions } from "./types";
 import { sleep } from "./utils";
@@ -50,7 +50,7 @@ export class HttpClient {
         const normalizedError = this.normalizeError(error, timeoutMs, url);
 
         if (
-          normalizedError instanceof WebUnlockerError &&
+          normalizedError instanceof ScrapingApiError &&
           !(normalizedError instanceof NetworkError)
         ) {
           throw normalizedError;
@@ -103,7 +103,7 @@ export class HttpClient {
   }
 
   private normalizeError(error: unknown, timeoutMs: number, url: string): Error {
-    if (error instanceof WebUnlockerError) {
+    if (error instanceof ScrapingApiError) {
       return error;
     }
 

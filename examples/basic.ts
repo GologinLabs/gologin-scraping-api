@@ -1,13 +1,13 @@
-import { WebUnlocker } from "../src";
+import { ScrapingApi } from "../src";
 
 async function main(): Promise<void> {
-  const apiKey = process.env.GOLOGIN_WEBUNLOCKER_API_KEY;
+  const apiKey = process.env.GOLOGIN_SCRAPING_API_KEY ?? process.env.GOLOGIN_WEBUNLOCKER_API_KEY;
 
   if (!apiKey) {
-    throw new Error("Missing GOLOGIN_WEBUNLOCKER_API_KEY environment variable");
+    throw new Error("Missing GOLOGIN_SCRAPING_API_KEY environment variable");
   }
 
-  const client = new WebUnlocker({ apiKey });
+  const client = new ScrapingApi({ apiKey });
   const result = await client.scrape("https://example.com");
 
   console.log(result.content.slice(0, 500));

@@ -2,7 +2,7 @@ import {
   APIError,
   AuthenticationError,
   RateLimitError,
-  WebUnlockerError
+  ScrapingApiError
 } from "./errors";
 import { HttpClient } from "./http";
 import {
@@ -10,7 +10,7 @@ import {
   ScrapeDiagnostics,
   ScrapeJSONResult,
   ScrapeMarkdownResult,
-  WebUnlockerOptions,
+  ScrapingApiOptions,
   ScrapeOptions,
   ScrapeResult,
   ScrapeTextResult
@@ -31,14 +31,14 @@ import {
   assessStructuredPage
 } from "./pageAssessment";
 
-export class WebUnlocker {
+export class ScrapingApi {
   private readonly apiKey: string;
   private readonly baseUrl: string;
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
   private readonly httpClient: HttpClient;
 
-  constructor(options: WebUnlockerOptions) {
+  constructor(options: ScrapingApiOptions) {
     this.apiKey = options.apiKey;
     this.baseUrl = normalizeBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL);
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
@@ -54,15 +54,15 @@ export class WebUnlocker {
 
   validateConfig(): void {
     if (!this.apiKey || this.apiKey.trim().length === 0) {
-      throw new WebUnlockerError("apiKey is required");
+      throw new ScrapingApiError("apiKey is required");
     }
 
     if (this.timeoutMs <= 0) {
-      throw new WebUnlockerError("timeoutMs must be greater than 0");
+      throw new ScrapingApiError("timeoutMs must be greater than 0");
     }
 
     if (!Number.isInteger(this.maxRetries) || this.maxRetries < 0) {
-      throw new WebUnlockerError("maxRetries must be an integer >= 0");
+      throw new ScrapingApiError("maxRetries must be an integer >= 0");
     }
   }
 
@@ -191,17 +191,17 @@ export class WebUnlocker {
 
   private assertValidTargetUrl(url: string): void {
     if (!url || url.trim().length === 0) {
-      throw new WebUnlockerError("url is required");
+      throw new ScrapingApiError("url is required");
     }
 
     try {
       new URL(url);
     } catch {
-      throw new WebUnlockerError("url must be a valid absolute URL");
+      throw new ScrapingApiError("url must be a valid absolute URL");
     }
   }
 
-  private async toStatusError(response: Response, url: string): Promise<WebUnlockerError> {
+  private async toStatusError(response: Response, url: string): Promise<ScrapingApiError> {
     const body = await this.safeReadText(response);
     const details = body ? `: ${truncate(body)}` : "";
     const message = `HTTP ${response.status} ${response.statusText}${details}`;
@@ -240,5 +240,8 @@ export class WebUnlocker {
   }
 }
 
-// Backward-compatible alias.
-export class GologinWebUnlockerClient extends WebUnlocker {}
+export class GologinScrapingApiClient extends ScrapingApi {}
+
+// Backward-compatible aliases.
+export class WebUnlocker extends ScrapingApi {}
+export class GologinWebUnlockerClient extends ScrapingApi {}

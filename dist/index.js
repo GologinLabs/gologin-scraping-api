@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.GologinSDKError = exports.WebUnlockerError = exports.describeNextActionHint = exports.assessStructuredPage = exports.assessHtmlPage = exports.GologinWebUnlockerClient = exports.WebUnlocker = void 0;
+exports.NetworkError = exports.TimeoutError = exports.APIError = exports.RateLimitError = exports.AuthenticationError = exports.GologinSDKError = exports.WebUnlockerError = exports.ScrapingApiError = exports.describeNextActionHint = exports.assessStructuredPage = exports.assessHtmlPage = exports.GologinWebUnlockerClient = exports.WebUnlocker = exports.GologinScrapingApiClient = exports.ScrapingApi = void 0;
 var client_1 = require("./client");
+Object.defineProperty(exports, "ScrapingApi", { enumerable: true, get: function () { return client_1.ScrapingApi; } });
+Object.defineProperty(exports, "GologinScrapingApiClient", { enumerable: true, get: function () { return client_1.GologinScrapingApiClient; } });
 Object.defineProperty(exports, "WebUnlocker", { enumerable: true, get: function () { return client_1.WebUnlocker; } });
 Object.defineProperty(exports, "GologinWebUnlockerClient", { enumerable: true, get: function () { return client_1.GologinWebUnlockerClient; } });
 var pageAssessment_1 = require("./pageAssessment");
@@ -9,6 +11,7 @@ Object.defineProperty(exports, "assessHtmlPage", { enumerable: true, get: functi
 Object.defineProperty(exports, "assessStructuredPage", { enumerable: true, get: function () { return pageAssessment_1.assessStructuredPage; } });
 Object.defineProperty(exports, "describeNextActionHint", { enumerable: true, get: function () { return pageAssessment_1.describeNextActionHint; } });
 var errors_1 = require("./errors");
+Object.defineProperty(exports, "ScrapingApiError", { enumerable: true, get: function () { return errors_1.ScrapingApiError; } });
 Object.defineProperty(exports, "WebUnlockerError", { enumerable: true, get: function () { return errors_1.WebUnlockerError; } });
 Object.defineProperty(exports, "GologinSDKError", { enumerable: true, get: function () { return errors_1.GologinSDKError; } });
 Object.defineProperty(exports, "AuthenticationError", { enumerable: true, get: function () { return errors_1.AuthenticationError; } });

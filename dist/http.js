@@ -31,7 +31,7 @@ class HttpClient {
             }
             catch (error) {
                 const normalizedError = this.normalizeError(error, timeoutMs, url);
-                if (normalizedError instanceof errors_1.WebUnlockerError &&
+                if (normalizedError instanceof errors_1.ScrapingApiError &&
                     !(normalizedError instanceof errors_1.NetworkError)) {
                     throw normalizedError;
                 }
@@ -67,7 +67,7 @@ class HttpClient {
         await (0, utils_1.sleep)(delayMs);
     }
     normalizeError(error, timeoutMs, url) {
-        if (error instanceof errors_1.WebUnlockerError) {
+        if (error instanceof errors_1.ScrapingApiError) {
             return error;
         }
         if (error instanceof Error && error.name === "AbortError") {

@@ -1,9 +1,10 @@
-export type WebUnlockerOptions = {
+export type ScrapingApiOptions = {
     apiKey: string;
     baseUrl?: string;
     timeoutMs?: number;
     maxRetries?: number;
 };
+export type WebUnlockerOptions = ScrapingApiOptions;
 export type PageOutcome = "ok" | "empty" | "incomplete" | "client_rendered_likely" | "authwall" | "challenge" | "blocked";
 export type NextActionHint = "use_gologin_agent_browser" | "check_data_endpoints";
 export type ScrapeDiagnostics = {
@@ -13,7 +14,8 @@ export type ScrapeDiagnostics = {
     headingCount: number;
     shellMarkersDetected: boolean;
 };
-export type GologinWebUnlockerClientOptions = WebUnlockerOptions;
+export type GologinScrapingApiClientOptions = ScrapingApiOptions;
+export type GologinWebUnlockerClientOptions = ScrapingApiOptions;
 export type ScrapeOptions = {
     timeoutMs?: number;
 };

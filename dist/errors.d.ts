@@ -4,27 +4,28 @@ export type SDKErrorContext = {
     body?: string | null;
     cause?: unknown;
 };
-export declare class WebUnlockerError extends Error {
+export declare class ScrapingApiError extends Error {
     readonly status?: number;
     readonly url?: string;
     readonly body?: string | null;
     readonly cause?: unknown;
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class AuthenticationError extends WebUnlockerError {
+export declare class AuthenticationError extends ScrapingApiError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class RateLimitError extends WebUnlockerError {
+export declare class RateLimitError extends ScrapingApiError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class APIError extends WebUnlockerError {
+export declare class APIError extends ScrapingApiError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class TimeoutError extends WebUnlockerError {
+export declare class TimeoutError extends ScrapingApiError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class NetworkError extends WebUnlockerError {
+export declare class NetworkError extends ScrapingApiError {
     constructor(message: string, context?: SDKErrorContext);
 }
-export declare class GologinSDKError extends WebUnlockerError {
+export { ScrapingApiError as WebUnlockerError };
+export declare class GologinSDKError extends ScrapingApiError {
 }

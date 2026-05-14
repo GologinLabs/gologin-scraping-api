@@ -5,7 +5,7 @@ export type SDKErrorContext = {
   cause?: unknown;
 };
 
-export class WebUnlockerError extends Error {
+export class ScrapingApiError extends Error {
   readonly status?: number;
   readonly url?: string;
   readonly body?: string | null;
@@ -13,7 +13,7 @@ export class WebUnlockerError extends Error {
 
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message);
-    this.name = "WebUnlockerError";
+    this.name = "ScrapingApiError";
     this.status = context.status;
     this.url = context.url;
     this.body = context.body;
@@ -22,40 +22,42 @@ export class WebUnlockerError extends Error {
   }
 }
 
-export class AuthenticationError extends WebUnlockerError {
+export class AuthenticationError extends ScrapingApiError {
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message, context);
     this.name = "AuthenticationError";
   }
 }
 
-export class RateLimitError extends WebUnlockerError {
+export class RateLimitError extends ScrapingApiError {
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message, context);
     this.name = "RateLimitError";
   }
 }
 
-export class APIError extends WebUnlockerError {
+export class APIError extends ScrapingApiError {
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message, context);
     this.name = "APIError";
   }
 }
 
-export class TimeoutError extends WebUnlockerError {
+export class TimeoutError extends ScrapingApiError {
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message, context);
     this.name = "TimeoutError";
   }
 }
 
-export class NetworkError extends WebUnlockerError {
+export class NetworkError extends ScrapingApiError {
   constructor(message: string, context: SDKErrorContext = {}) {
     super(message, context);
     this.name = "NetworkError";
   }
 }
 
+export { ScrapingApiError as WebUnlockerError };
+
 // Backward-compatible alias.
-export class GologinSDKError extends WebUnlockerError {}
+export class GologinSDKError extends ScrapingApiError {}
